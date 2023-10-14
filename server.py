@@ -1,4 +1,3 @@
-import logging
 import os
 import pymongo
 import pickle
@@ -6,6 +5,7 @@ import pickle
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, send_file
+from pymongo.server_api import ServerApi
 
 
 from src.generate_shadow_matrix import generate_shadow_matrix_for_datetime
@@ -27,7 +27,7 @@ IMAGES_DIR_PATH = os.path.join(
 
 
 # db connection
-db_client = pymongo.MongoClient(get_connection_string())
+db_client = pymongo.MongoClient(get_connection_string(), server_api=ServerApi('1'))
 db = db_client["smart_research"]
 collection = db["shadow_matrix"]
 

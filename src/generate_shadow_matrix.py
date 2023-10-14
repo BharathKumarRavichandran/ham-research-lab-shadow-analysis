@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from pymongo.server_api import ServerApi
+
 from src.utils.solarposition import get_solarposition
 from src.utils.shadowingfunction_wallheight_13 import shadowingfunction_wallheight_13
 from src.utils.db import get_connection_string
@@ -60,8 +62,7 @@ def calculate_shadowing(azimuth, altitude, dsm, scale, walls, dirwalls):
 
 
 def create_db_client():
-    conn_str = get_connection_string()
-    db_client = pymongo.MongoClient(conn_str)
+    db_client = pymongo.MongoClient(get_connection_string(), server_api=ServerApi('1'))
     db = db_client["smart_research"]
     collection = db["shadow_matrix"]
     return db_client, collection

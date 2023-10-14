@@ -1,0 +1,9 @@
+venv/
+git/
+db/
+examples/
+__pycache__/
+.github/
+.vscode/
+.idea/
+docker/
