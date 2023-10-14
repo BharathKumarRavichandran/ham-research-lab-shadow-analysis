@@ -35,6 +35,7 @@ def preprocess_solar_data(df_solar_data, utc_offset):
     df_solar_data['TimeStamp'] = pd.DatetimeIndex(df_solar_data['TimeStamp']) - pd.DateOffset(hours=utc_offset)
     df_solar_data["TimeStamp"] = df_solar_data["TimeStamp"].apply(pd.to_datetime)
     df_solar_data.set_index("TimeStamp", inplace=True)
+    logger.info(f"Datetime in preprocess solar data: {df_solar_data.index[0]}")
     return df_solar_data
 
 
@@ -78,17 +79,20 @@ def generate_shadow_matrix_for_datetime(start_datetime):
 
     # len(df_solar) is 1 here
     for i in range(len(df_solar)):
+        current_datetime = df_solar.index[i]
         altitude = df_solar['Elevation'].iloc[i]
         azimuth = df_solar['Azimuth'].iloc[i]
         hour = df_solar.index[i].hour
         minute = df_solar.index[i].minute
-        # logger.debug(hour, minute)
+        logger.info(f"DF solar data: hour: "
+                    f"{hour}, minute: {minute}, "
+                    f"altitude: {altitude}, azimuth: {azimuth}")
 
         sh = calculate_shadowing(azimuth, altitude, dsm, scale, walls, dirwalls)
         sh_binary = pickle.dumps(sh)
         # visualize_shadow_matrix(sh, hour, minute)
 
-        current_datetime = df_solar.index[i]
+        logger.info(f"Storing the generated shadow matrix with datetime: {current_datetime}")
         data = {
             "datetime": current_datetime,
             "shadow_matrix": sh_binary,

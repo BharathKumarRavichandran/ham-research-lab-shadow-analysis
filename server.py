@@ -36,6 +36,7 @@ def generate_shadow_matrix():
         return jsonify({"error": "Invalid token"}), 401
 
     current_datetime = datetime.now()
+    logger.info(f"Passing datetime {current_datetime} to generate shadow matrix")
     stored_datetime = generate_shadow_matrix_for_datetime(current_datetime)
 
     # db_client, collection = create_db_client()
