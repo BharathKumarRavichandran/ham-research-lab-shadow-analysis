@@ -1,4 +1,5 @@
 import os
+import pymongo
 
 
 def get_connection_string():
@@ -12,3 +13,10 @@ def get_connection_string():
     else:
         conn_str = f"{protocol}://{username}:{password}@{host}:{port}/?retryWrites=true&w=majority"
     return conn_str
+
+
+def create_db_client():
+    db_client = pymongo.MongoClient(get_connection_string())
+    db = db_client["smart_research"]
+    collection = db["shadow_matrix"]
+    return db_client, collection

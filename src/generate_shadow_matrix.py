@@ -1,15 +1,12 @@
 import os
-import pymongo
 import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from pymongo.server_api import ServerApi
-
 from src.utils.solarposition import get_solarposition
 from src.utils.shadowingfunction_wallheight_13 import shadowingfunction_wallheight_13
-from src.utils.db import get_connection_string
+from src.utils.db import create_db_client
 from src.utils.helpers import visualize_shadow_matrix
 from src.utils.logger import logger
 
@@ -61,13 +58,6 @@ def calculate_shadowing(azimuth, altitude, dsm, scale, walls, dirwalls):
     return sh
 
 
-def create_db_client():
-    db_client = pymongo.MongoClient(get_connection_string(), server_api=ServerApi('1'))
-    db = db_client["smart_research"]
-    collection = db["shadow_matrix"]
-    return db_client, collection
-
-
 def generate_shadow_matrix_for_datetime(start_datetime):
     dsm = load_dsm_data()
     # plot_dsm(dsm)
@@ -108,8 +98,8 @@ def generate_shadow_matrix_for_datetime(start_datetime):
             "azimuth": azimuth
         }
 
-        # Insert data
         db_client, collection = create_db_client()
         collection.insert_one(data)
+        db_client.close()
 
         return current_datetime

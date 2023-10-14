@@ -1,14 +1,12 @@
 import os
-import pymongo
 import pickle
 
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, send_file
-from pymongo.server_api import ServerApi
 
 from src.generate_shadow_matrix import generate_shadow_matrix_for_datetime
-from src.utils.db import get_connection_string
+from src.utils.db import create_db_client
 from src.utils.helpers import save_shadow_matrix_as_image
 from src.utils.logger import logger
 
@@ -25,12 +23,6 @@ IMAGES_DIR_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "images"
 )
-
-
-# db connection
-db_client = pymongo.MongoClient(get_connection_string(), server_api=ServerApi('1'))
-db = db_client["smart_research"]
-collection = db["shadow_matrix"]
 
 
 @app.route('/shadow-matrix', methods=['POST'])
@@ -50,6 +42,7 @@ def generate_shadow_matrix():
     logger.info(f"Returned datetime: {stored_datetime}")
     query = {"datetime": stored_datetime}
 
+    db_client, collection = create_db_client()
     # this should return only one document
     documents = collection.find(query)
 
@@ -68,12 +61,9 @@ def generate_shadow_matrix():
         else:
             return jsonify({"error": "Internal server error"}), 500
 
-    return send_file(image_paths[0], as_attachment=True)
-
-
-@app.teardown_appcontext
-def close_mongo_connection(exception):
     db_client.close()
+
+    return send_file(image_paths[0], as_attachment=True)
 
 
 if __name__ == '__main__':

@@ -13,3 +13,4 @@ services:
       - .env
     volumes:
       - ./images:/usr/src/app/images
+      - ./logs:/usr/src/app/logs

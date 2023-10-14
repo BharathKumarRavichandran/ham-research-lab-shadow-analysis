@@ -1,5 +1,6 @@
 venv/
 git/
+logs/
 db/
 examples/
 __pycache__/

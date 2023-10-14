@@ -1,6 +1,8 @@
 FROM python:3.9.7-slim
 
 RUN apt-get update
+RUN apt-get install -y --no-install-recommends gcc\
+    python3-tk
 
 WORKDIR /usr/src/app
 
