@@ -1,8 +1,11 @@
 import time
 
+
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+
+from src.utils.logger import logger
 
 
 def visualize_shadow_matrix(sh, hour, minute):
@@ -33,5 +36,5 @@ def save_shadow_matrix_as_image(sh, hour, minute, file_path):
 
     # Restore original bg
     matplotlib.use(original_backend)
-    print(f"Saved image to path {file_path}")
+    logger.info(f"Saved image to path {file_path}")
     time.sleep(1)

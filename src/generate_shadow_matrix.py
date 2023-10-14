@@ -1,7 +1,6 @@
 import os
 import pymongo
 import pickle
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,6 +11,7 @@ from src.utils.solarposition import get_solarposition
 from src.utils.shadowingfunction_wallheight_13 import shadowingfunction_wallheight_13
 from src.utils.db import get_connection_string
 from src.utils.helpers import visualize_shadow_matrix
+from src.utils.logger import logger
 
 
 def load_dsm_data():
@@ -92,7 +92,7 @@ def generate_shadow_matrix_for_datetime(start_datetime):
         azimuth = df_solar['Azimuth'].iloc[i]
         hour = df_solar.index[i].hour
         minute = df_solar.index[i].minute
-        print(hour, minute)
+        # logger.debug(hour, minute)
 
         sh = calculate_shadowing(azimuth, altitude, dsm, scale, walls, dirwalls)
         sh_binary = pickle.dumps(sh)

@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify, send_file
 from pymongo.server_api import ServerApi
 
-
 from src.generate_shadow_matrix import generate_shadow_matrix_for_datetime
 from src.utils.db import get_connection_string
 from src.utils.helpers import save_shadow_matrix_as_image
+from src.utils.logger import logger
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -34,6 +35,7 @@ collection = db["shadow_matrix"]
 
 @app.route('/shadow-matrix', methods=['POST'])
 def generate_shadow_matrix():
+    logger.info("Incoming request")
     data = request.json
     if "TOKEN" not in data:
         return jsonify({"error": "Token is required to access the endpoint"}), 404
@@ -45,7 +47,7 @@ def generate_shadow_matrix():
     stored_datetime = generate_shadow_matrix_for_datetime(current_datetime)
 
     # db_client, collection = create_db_client()
-    print(f"Returned datetime: {stored_datetime}")
+    logger.info(f"Returned datetime: {stored_datetime}")
     query = {"datetime": stored_datetime}
 
     # this should return only one document
@@ -58,7 +60,7 @@ def generate_shadow_matrix():
 
         image_name = matrix_data["datetime"].strftime("%Y-%m-%d_%H-%M-%S-%f")
         image_path = os.path.join(IMAGES_DIR_PATH, f"{image_name}.png")
-        print(f"Image path: {image_path}")
+        logger.info(f"Image path: {image_path}")
 
         save_shadow_matrix_as_image(sh, matrix_data["hour"], matrix_data["minute"], image_path)
         if os.path.exists(image_path):
