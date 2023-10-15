@@ -1,4 +1,18 @@
 # Shadow Analysis
+The shadow analysis application is containerized and deployed using Flask and docker.
+The core server component is `server.py`, and the project includes other shadow-related modules, helper scripts, and utility functions can be found in the src/ directory.
+The `.ipynb` file used to validate the hosted application is `shadow_client.ipynb`. 
+The apache conf used to reverse proxy the hosted application is present in `apache/`. 
+If you want to set up the project, you can refer to the setup instructions below.
+
+### API Endpoint
+- API Gateway - https://gw5lcvggtg.execute-api.us-east-2.amazonaws.com/smart-research/shadow-matrix
+- Request Method: POST
+- Authentication: TOKEN is required in json parameters
+- JSON Parameters:
+  - TOKEN (required)
+  - cmap (optional)
+    - Allowed cmap values - `['viridis', 'plasma', 'inferno', 'magma', 'cividis']`
 
 ## Project Installation Without Docker
 1. Install Python (3.9+)
