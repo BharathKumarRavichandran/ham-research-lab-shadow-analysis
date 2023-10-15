@@ -19,12 +19,12 @@ def visualize_shadow_matrix(sh, hour, minute):
     df.head()
 
 
-def save_shadow_matrix_as_image(sh, hour, minute, file_path):
+def save_shadow_matrix_as_image(sh, hour, minute, file_path, cmap="viridis"):
     original_backend = matplotlib.get_backend()
     matplotlib.use('Agg')  # agg to ignore gui related errors in backend
 
     f, ax = plt.subplots(dpi=500)
-    plt.imshow(sh, cmap='viridis')
+    plt.imshow(sh, cmap=cmap)
     plt.title("%2s" % str(hour).zfill(2) + ":%2s" % str(minute).zfill(2),
               pad=10,
               fontsize=15,

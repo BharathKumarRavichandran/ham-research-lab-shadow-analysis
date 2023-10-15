@@ -23,6 +23,7 @@ IMAGES_DIR_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "images"
 )
+AVAILABLE_CMAPS = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
 
 
 @app.route('/shadow-matrix', methods=['POST'])
@@ -34,6 +35,13 @@ def generate_shadow_matrix():
 
     if data.get("TOKEN") != APP_SECRET:
         return jsonify({"error": "Invalid token"}), 401
+
+    cmap = "viridis"
+    if "cmap" in data:
+        if data["cmap"] in AVAILABLE_CMAPS:
+            cmap = data["cmap"]
+        else:
+            return jsonify({"error": "Provided cmap is not a valid option"}), 404
 
     current_datetime = datetime.now()
     logger.info(f"Passing datetime {current_datetime} to generate shadow matrix")
@@ -56,7 +64,7 @@ def generate_shadow_matrix():
         image_path = os.path.join(IMAGES_DIR_PATH, f"{image_name}.png")
         logger.info(f"Image path: {image_path}")
 
-        save_shadow_matrix_as_image(sh, matrix_data["hour"], matrix_data["minute"], image_path)
+        save_shadow_matrix_as_image(sh, matrix_data["hour"], matrix_data["minute"], image_path, cmap)
         if os.path.exists(image_path):
             image_paths.append(image_path)
         else:
